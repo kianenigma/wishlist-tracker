@@ -36,7 +36,7 @@ for category, (repo_name, issue_number) in issues.items():
 
     for comment in issue.get_comments():
         # in the comment body, if there is a string `#(\d)`, replace it with
-        # https://github\.com/paritytech/polkadot-sdk/issues/(number)
+        # https://github.com/paritytech/polkadot-sdk/issues/(number)
         updated_body = re.sub(r'#(\d+)', r"https://github.com/paritytech/polkadot-sdk/issues/\1", comment.body)
 
         matches = pattern.findall(updated_body)
@@ -45,7 +45,7 @@ for category, (repo_name, issue_number) in issues.items():
             issue_key = (url, org, repo_name, issue_id)
             # Get the count of thumbs-up reactions for the comment
             reactions = comment.get_reactions()
-            thumbs_up_count = sum(1 for reaction in reactions if reaction.content == '+1')
+            thumbs_up_count = sum(1 for reaction in reactions if reaction.content in ['+1', 'heart', 'rocket'])
             print(f"Found wish: {url} with {thumbs_up_count} +1s")
             if issue_key in wishes:
                 print("Incrementing count by ", thumbs_up_count)
@@ -56,7 +56,7 @@ for category, (repo_name, issue_number) in issues.items():
                 temp_issue = temp_repo.get_issue(int(issue_id))
                 temp_reactions = temp_issue.get_reactions()
                 issue_details[url] = [temp_issue.title, "👾 Open" if temp_issue.state == 'open' else "✅Closed"]
-                source_thumbs_up_count = sum(1 for reaction in temp_reactions if reaction.content == '+1')
+                source_thumbs_up_count = sum(1 for reaction in temp_reactions if reaction.content in ['+1', 'heart', 'rocket'])
                 print(f"initial count {thumbs_up_count} + {source_thumbs_up_count}")
                 wishes[issue_key] = thumbs_up_count + source_thumbs_up_count
 
